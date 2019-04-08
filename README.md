@@ -16,14 +16,14 @@ Senior Design Project Repo
 
 ## Server File Hierarchy
 
-/-users
-  |-Dave
-  |-Guru
-  |-Parker
-    |-strategy.py
-    |-metrics.txt
+- users
+  - Dave
+  - Guru
+  - Parker
+    - strategy.py
+    - metrics.txt
   ...
-  |-Zorro
-/-server
-  |-harness.py (code used to run strategies)
-  |-server.py (code used to accept uploads and drive strategy harness)
+    - Zorro
+- server
+  - harness.py (code used to run strategies)
+  - server.py (code used to accept uploads and drive strategy harness)
