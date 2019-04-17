@@ -4,6 +4,7 @@ import matplotlib
 import sys
 import os
 import socket
+import requests
 
 class Server:
     def __init__(self):
@@ -15,8 +16,8 @@ class Server:
     def send(self, data):
         self.sock.send(data.encode('ascii'))
 
-    def recv(self):
-        return self.sock.recv(1024)
+    def recv(self, amount=1024):
+        return self.sock.recv(amount)
         
 
 class Client(Frame):
@@ -36,6 +37,9 @@ class Client(Frame):
         self.selected_file.set("-")
         self.error_text = StringVar()
         self.error_text.set("No issues.")
+        self.token = None
+        self.refresh_token = None
+        self.account_url = None
 
         self.setup()
 
@@ -96,15 +100,49 @@ class Client(Frame):
             self.update_error_text("Could not read file!")
             return
 
-        # get auth token and refresh token
-        # auth, refresh = get_tokens()
+        """
+        # login 
+        payload = {
+            'client_id': 'c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS',
+            'expires_in': 3600,
+            'grant_type': 'password',
+            'password': self.pw.get(),
+            'scope': 'internal',
+            'username': self.un.get(),
+        }
+
+        r = requests.post('https://api.robinhood.com/oauth2/token/', data=payload)
+        if r.status_code != 200:
+            raise ConnectionError('Unable to establish connection with Robinhood API.')
+
+        ret = r.json()
+        self.token = ret['access_token']
+        self.refresh_token = ret["refresh_token"]
+        
+        # get account url
+        headers = {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer {}'.format(self.token)
+        }
+
+        r = requests.get('https://api.robinhood.com/portfolios/', headers=headers)
+        if r.status_code != 200:
+            raise ConnectionError('Unable to establish connection with Robinhood API.')
+
+        ret = r.json()
+        acc_url = ret['results'][0]['account']
+        self.account_url = acc_url
+        """
 
         # send to server
-        user = self.un.get()
-        self.server.send(user)
-        # server.send(auth)
-        # server.send(refresh)
-        # server.send(code)
+        # to_server = 'login,' + self.un.get() + ',' + self.account_url + ',' + self.token + ',' + self.refresh_token
+        to_server = 'login,USER,TOKEN,REFRESH_TOKEN'
+        self.server.send(to_server)
+        self.server.send(code)
+
+        status = self.server.recv()
+        if status != 'OK':
+            raise IOError("Bad response from server")
 
 def main():
     root = Tk()
