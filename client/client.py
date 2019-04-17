@@ -3,11 +3,30 @@ import tkinter.filedialog as filedialog
 import matplotlib
 import sys
 import os
+import socket
 
+class Server:
+    def __init__(self):
+        self.host = "com1575.eecs.utk.edu"
+        self.port = 12345
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect((self.host, self.port))
+
+    def send(self, data):
+        self.sock.send(data.encode('ascii'))
+
+    def recv(self):
+        return self.sock.recv(1024)
+        
 
 class Client(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
+
+        # Server
+        self.server = Server()
+
+        # GUI
         self.master = master
         self.un = StringVar()
         self.un.set("")
@@ -37,7 +56,10 @@ class Client(Frame):
         choose = Button(self, text="Pick Strategy", command=self.select_file)
         choose.place(x=100, y=0)
         selected = Label(self, textvariable=self.selected_file)
-        selected.place(x=100, y=20)
+        selected.place(x=100, y= 25)
+
+        upload = Button(self, text="Upload", command=self.upload)
+        upload.place(x = 100, y = 40)
 
         quit = Button(self, text="Quit", command=exit)
         quit.place(x=0, y=0)
@@ -78,6 +100,8 @@ class Client(Frame):
         # auth, refresh = get_tokens()
 
         # send to server
+        user = self.un.get()
+        self.server.send(user)
         # server.send(auth)
         # server.send(refresh)
         # server.send(code)
