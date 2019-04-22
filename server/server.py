@@ -2,6 +2,10 @@ import socket
 from _thread import *
 import threading
 import signal
+import os
+import datetime
+import time
+import shutil
 
 print_lock = threading.Lock()
 
@@ -43,7 +47,7 @@ class Server:
             curr = Connection(username, client, fields[2], fields[3], code)
             self.connections[username] = curr
 
-            tmp = threading.Thread()
+            tmp = threading.Thread(None, self.handle_client, username, username)
 
             # return success to signal
             client.send('OK'.encode())
@@ -51,10 +55,33 @@ class Server:
     def handle_client(self, username):
         connection = self.connections[username]
 
-        # WIP: DEC
+        # make code / log directory if not exist
+        if not os.path.exists('./users/{}'.format(username)):
+            os.mkdir('./users/{}'.format(username))
 
+        # delete code if already present
+        if os.path.exists('./users/{}/strategy.py'):
+            os.remove('./users/{}/strategy.py'.format(username))
 
+        # store code in directory
+        with open("./users/{}/strategy.py".format(username), "w") as codefile:
+            codefile.write(connection.code)
 
+        time = datetime.datetime.today()
+
+        # EST assumed
+        # rebalance after market close
+        while True:
+
+            # rebalance
+            if 16 < time.hour < 17 and 35 < time.minute < 45:
+                usercode = __import__("users.{}.strategy".format(username))
+                usercode.strategy(connection.token)
+                time.sleep(720) # 12 minutes, force wait to outside interval
+                del usercode
+
+            else:
+                time.sleep(300) # 5 minutes, will hit at least once in interval above
 
 def main():
     server = Server()
