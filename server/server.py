@@ -1,13 +1,9 @@
 import socket
-from _thread import *
 import threading
 import signal
 import os
 from datetime import datetime as datetime
 import time
-import shutil
-
-print_lock = threading.Lock()
 
 port = 12348
 
@@ -22,7 +18,7 @@ class Connection:
 class Server:
     def __init__(self):
         global port
-        self.connections = {}  # connected clients { username -> socket }
+        self.connections = {}  # connected clients { username -> Connection instance }
         self.pool = []
         self.master_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.master_sock.bind(('',port))
@@ -86,43 +82,6 @@ class Server:
 def main():
     server = Server()
     server.listen()
-
-
-"""
-def threaded(c):
-    data = None
-    while True:
-        #print("oy")
-        try:
-            data = c.recv(1024)
-            data = data[::-1]
-            c.send(data)
-            c.send('cool'.encode())
-            print("Sent some data...")
-        except socket.error:
-            pass
-        else:
-            print("error")
-
-        #if not data:
-        #    print('Bye')
-        #    break
-    c.close()
-
-def Main():
-    host = ""
-    port = 12345
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((host, port))
-    print("socket binded to post", port)
-    s.listen(5)
-    print("socket is listening")
-    while True:
-        c, addr = s.accept()
-        print('Connected to :', addr[0], ':', addr[1])
-        start_new_thread(threaded, (c,))
-    s.close()
-"""
 
 if __name__ == '__main__':
     main()

@@ -71,7 +71,7 @@ class Client(Frame):
         upload = Button(self, text="Upload", command=self.upload)
         upload.place(x = 100, y = 40)
 
-        quit = Button(self, text="Quit", command=exit)
+        quit = Button(self, text="Quit")
         quit.place(x=0, y=0)
 
         err = Label(self, textvariable=self.error_text)
