@@ -1,6 +1,5 @@
 from tkinter import *
 import tkinter.filedialog as filedialog
-import matplotlib
 import sys
 import os
 import socket
