@@ -6,12 +6,18 @@ import os
 import socket
 import requests
 
+LOCAL = True
+
 class Server:
     def __init__(self):
         self.host = "com1575.eecs.utk.edu"
-        self.port = 12345
+        self.port = 12348
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((self.host, self.port))
+
+        if LOCAL:
+            self.sock.connect(('', self.port))
+        else:
+            self.sock.connect((self.host, self.port))
 
     def send(self, data):
         self.sock.send(data.encode('ascii'))
@@ -141,8 +147,10 @@ class Client(Frame):
         self.server.send(code)
 
         status = self.server.recv()
-        if status != 'OK':
-            raise IOError("Bad response from server")
+        if status.decode() == 'OK':
+            self.update_error_text("No errors from server")
+        else:
+            self.update_error_text("Bad response from server")
 
 def main():
     root = Tk()
