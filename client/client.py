@@ -10,13 +10,13 @@ LOCAL = True
 class Server:
     def __init__(self):
         self.host = "com1575.eecs.utk.edu"
-        self.port = 12348
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.port = 12349
+        #self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        if LOCAL:
-            self.sock.connect(('', self.port))
-        else:
-            self.sock.connect((self.host, self.port))
+        #if LOCAL:
+            #self.sock.connect(('', self.port))
+        #else:
+            #self.sock.connect((self.host, self.port))
 
     def send(self, data):
         self.sock.send(data.encode('ascii'))

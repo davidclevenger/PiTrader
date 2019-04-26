@@ -10,7 +10,6 @@ import tradinglib.robinhood as robinhood
 
 def strategy(auth):
     """
-    
     :param auth: Python dict
         'token' -> Robinhood auth token
         'refresh' -> Robinhood refresh token
